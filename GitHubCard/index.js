@@ -3,6 +3,9 @@
            https://api.github.com/users/<your name>
 */
 
+const github = axios.get('https://api.github.com/users/Bobj2018/followers');
+console.log(github);
+
 /* Step 2: Inspect and study the data coming back, this is YOUR 
    github info! You will need to understand the structure of this 
    data in order to use it to build your component function 
@@ -24,7 +27,85 @@
           user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+const createCard = (obj) => {
+  const card = document.createElement('div');
+  const cardImg = document.createElement('img');
+  const cardInfo = document.createElement('div')
+  const cardName = document.createElement('h3');
+  const cardUserName = document.createElement('p');
+  const cardLocation = document.createElement('p');
+  const cardProfile = document.createElement('p');
+  const cardProfileLink = document.createElement('a');
+  const cardFollowers = document.createElement('p');
+  const cardFollowing = document.createElement('p');
+  const cardBio = document.createElement('p');
+
+  cardImg.src = obj.avatar_url;
+  cardName.textContent = obj.name;
+  cardUserName.textContent = obj.login;
+  cardLocation.textContent = `Location: ${obj.location}`;
+  cardProfile.textContent = "Profile: ";
+  cardProfileLink.textContent = obj.html_url;
+  cardProfileLink.href = obj.html_url;
+  cardFollowers.textContent = `Followers ${obj.followers}`;
+  cardFollowing.textContent = `Following ${obj.following}`;
+  cardBio.textContent = `Bio: ${obj.bio}`;
+
+  card.classList.add('card');
+  cardInfo.classList.add('card-info');
+  cardName.classList.add('name');
+  cardUserName.classList.add('username');
+
+  card.appendChild(cardImg);
+  card.appendChild(cardInfo);
+  cardInfo.appendChild(cardName);
+  cardInfo.appendChild(cardUserName);
+  cardInfo.appendChild(cardLocation);
+  cardInfo.appendChild(cardProfile);
+  cardProfile.appendChild(cardProfileLink);
+  cardInfo.appendChild(cardFollowers);
+  cardInfo.appendChild(cardFollowing);
+
+  return card;
+
+}
+
+const cards = document.querySelector(".cards")
+
+
+axios.get('https://api.github.com/users/Bobj2018/followers')
+  .then(response => {
+    // console.log(response.data);
+    // response.data.forEach(data => {
+    //   followersArray.push(data);
+    // })
+    // console.log(followersArray);
+    return response.data;
+  })
+  .then(success => {
+    const followersArray = [];
+    success.forEach(data => {
+      axios.get(`https://api.github.com/users/${data.login}`)
+        .then(followers => {
+          // followersArray.push(followers.data)
+          const newCard = createCard(followers.data)
+          cards.appendChild(newCard);
+        })
+        .catch(error => {
+          console.error('error: ', error);
+        })
+    })
+    console.log(followersArray);
+    followersArray.forEach(element => {
+      console.log(element);
+    })
+  })
+  .catch(error => {
+    console.error('error: ', error);
+  });
+
+
+
 
 /* Step 3: Create a function that accepts a single object as its only argument,
           Using DOM methods and properties, create a component that will return the following DOM element:
@@ -35,7 +116,7 @@ const followersArray = [];
     <h3 class="name">{users name}</h3>
     <p class="username">{users user name}</p>
     <p>Location: {users location}</p>
-    <p>Profile:  
+    <p>Profile:
       <a href={address to users github page}>{address to users github page}</a>
     </p>
     <p>Followers: {users followers count}</p>
@@ -45,6 +126,11 @@ const followersArray = [];
 </div>
 
 */
+
+
+
+
+
 
 /* List of LS Instructors Github username's: 
   tetondan
